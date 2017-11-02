@@ -13,7 +13,6 @@ ages = pickle.load( open("practice_outliers_ages.pkl", "r") )
 net_worths = pickle.load( open("practice_outliers_net_worths.pkl", "r") )
 
 
-
 ### ages and net_worths need to be reshaped into 2D numpy arrays
 ### second argument of reshape command is a tuple of integers: (n_rows, n_columns)
 ### by convention, n_rows is the number of data points
@@ -26,7 +25,13 @@ ages_train, ages_test, net_worths_train, net_worths_test = train_test_split(ages
 ### fill in a regression here!  Name the regression object reg so that
 ### the plotting code below works, and you can see what your regression looks like
 
-
+from sklearn import linear_model
+from sklearn.metrics import r2_score
+reg = linear_model.LinearRegression()
+reg.fit(ages_train, net_worths_train)
+print('Slope', reg.coef_[0])
+pred = reg.predict(ages_test)
+print('Variance score: %.3f' % r2_score(net_worths_test, pred))
 
 
 
@@ -41,7 +46,7 @@ try:
 except NameError:
     pass
 plt.scatter(ages, net_worths)
-plt.show()
+# plt.show()
 
 
 ### identify and remove the most outlier-y points
@@ -54,11 +59,6 @@ except NameError:
     print "can't make predictions to use in identifying outliers"
 
 
-
-
-
-
-
 ### only run this code if cleaned_data is returning data
 if len(cleaned_data) > 0:
     ages, net_worths, errors = zip(*cleaned_data)
@@ -69,6 +69,9 @@ if len(cleaned_data) > 0:
     try:
         reg.fit(ages, net_worths)
         plt.plot(ages, reg.predict(ages), color="blue")
+        pred = reg.predict(ages_test)
+        print('Variance score: %.3f' % r2_score(net_worths_test, pred))
+        print('Slope', reg.coef_[0])
     except NameError:
         print "you don't seem to have regression imported/created,"
         print "   or else your regression object isn't named reg"
